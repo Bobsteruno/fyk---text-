@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Fix Your Kicks · Send Text</title>
+<style>
+:root{--bg:#F1EFEE;--surface:#FFFFFF;--ink:#151313;--muted:#5F5857;--line:#D2CCCB;--accent:#C4262A;--accent-ink:#FFFFFF;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#110F0F;--surface:#1B1818;--ink:#EFEBEA;--muted:#A39C9B;--line:#383232;--accent:#EF4F4C;--accent-ink:#1A0606;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+main{max-width:480px;margin:0 auto;display:grid;gap:16px}
+h1{margin:0;font:800 1.5rem/1.1 "Arial Narrow","Roboto Condensed",system-ui,sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:8px}
+.to{font-weight:700;font-size:1.1rem;overflow-wrap:anywhere}
+.msg{margin:0;white-space:pre-wrap;color:var(--muted)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1.1rem;text-decoration:none}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.note{margin:0;color:var(--muted);font-size:.92rem}
+</style>
+</head>
+<body>
+<main>
+  <h1>Send pickup text</h1>
+  <div class="card" id="card"><div class="to" id="to"></div><p class="msg" id="msg"></p></div>
+  <a class="btn" id="open" href="#">Open Messages</a>
+  <p class="note" id="note">After you send it, close this tab and tap Mark texted in the app.</p>
+</main>
+<script>
+(function () {
+  var p = new URLSearchParams(location.hash.slice(1));
+  var to = (p.get('to') || '').replace(/[^\d+]/g, '');
+  var body = p.get('body') || '';
+  var name = p.get('name') || '';
+  var open = document.getElementById('open');
+  if (!to) {
+    document.getElementById('card').hidden = true;
+    open.hidden = true;
+    document.getElementById('note').textContent = 'Open this page from the Texts tab in your Fix Your Kicks app.';
+    return;
+  }
+  document.getElementById('to').textContent = (name ? name + ' · ' : '') + to;
+  document.getElementById('msg').textContent = body;
+  var href = 'sms:' + to + '?&body=' + encodeURIComponent(body);
+  open.href = href;
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  try { location.href = href; } catch (e) {}
+})();
+</script>
+</body>
+</html>
